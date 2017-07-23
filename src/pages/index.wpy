@@ -41,7 +41,7 @@ import user from './user'
 
 export default class Index extends wepy.page {
   config = {
-    navigationBarTitleText: '深大的树洞'
+    navigationBarTitleText: '海大树洞BiuBiuBiu'
   }
 
   components = {
@@ -63,10 +63,11 @@ export default class Index extends wepy.page {
       tabIndex = parseInt(tabIndex)
 
       // 清空消息提醒
-      if (tabIndex === 1) {
-        this.unreadMessagesCount = 0
-        this.$apply()
-      }
+      // if (tabIndex === 1) {
+      //   this.unreadMessagesCount = 0
+      //   this.$apply()
+      // }
+      // 不需要清空吧？
 
       if (this.tab === tabIndex) {
         this.$invoke(this.tabs[tabIndex], 'onReload')
@@ -119,7 +120,7 @@ export default class Index extends wepy.page {
     } catch (e) {
       wepy.showModal({
         title: '提示',
-        content: `用户登录失败，请截图本提示，并联系深大汪峰。${e.message}`
+        content: `用户登录失败，请截图本提示，并联系海大领沃团队。${e.message}`
       })
     }
 
@@ -147,8 +148,8 @@ export default class Index extends wepy.page {
 
   // onShareAppMessage () {
   //   return {
-  //     title: '深大树洞',
-  //     desc: '深大树洞首页~快来匿名发表树洞啊~',
+  //     title: '海大树洞',
+  //     desc: '海大树洞首页~快来匿名发表树洞啊~',
   //     path: '/pages/index'
   //   }
   // }

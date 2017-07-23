@@ -254,7 +254,7 @@ export default class NewBlog extends wepy.page {
           wepy.hideToast()
           wepy.showModal({
             title: '提示',
-            content: '服务器错误，上传图片失败。请重试或截图本提示联系深大汪峰。' + e.message,
+            content: '服务器错误，上传图片失败。请重试或截图本提示联系海大领沃团队。' + e.message,
             showCancel: false
           })
           return
@@ -268,11 +268,13 @@ export default class NewBlog extends wepy.page {
           method: api.blog.new.method,
           data: pack
         })
+        this.images = []
+        this.$apply()
       } catch (e) {
         wepy.hideToast()
         wepy.showModal({
           title: '提示',
-          content: '发送树洞失败。请截图本提示，联系深大汪峰。' + e.message,
+          content: '发送树洞失败。请截图本提示，联系海大领沃团队。' + e.message,
           showCancel: false
         })
         return
@@ -299,6 +301,15 @@ export default class NewBlog extends wepy.page {
   async onShow () {
     const { model } = await wepy.getSystemInfo()
     this.device = model.replace(/<.*>/, '')
+  }
+  async onUnload() {
+    this.content = ''
+    this.disabled = true
+    this.device = ''
+    this.location = ''
+    this.latitude = ''
+    this.longitude = ''
+    this.$apply()
   }
 }
 </script>
@@ -456,7 +467,7 @@ export default class NewBlog extends wepy.page {
     }
     
     button[disabled][type="primary"] {
-      opacity: 0.7
+      opacity: .1;
     }
 
     .button-hover {

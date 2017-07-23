@@ -61,6 +61,15 @@
           <image class="blog-item-operation-icon" src="../assets/svgs/comment.svg"></image>
         </view>
         <view
+          hover-class="blog-item-operation-like-scale"
+          class="blog-item-operation-like">
+          <button class="viewbutton" open-type="share">
+            <image
+              class="blog-item-operation-icon"
+              src="../assets/svgs/transfer.svg"></image>
+          </button>
+        </view>
+        <view
           @tap.stop="showMore({{ idx }}, {{ blog.id }})"
           class="blog-item-operation-more"
           wx:if="{{ blog.user.isAdmin || blog.user.isAuthor }}">
@@ -99,6 +108,15 @@
 
     <!-- comment -->
     <view class="comment" wx:if="{{ !loading }}">
+      <view class="isanonymous" wx:if="{{ focusComment || !disable }}">
+        <view
+          class="isanonymous-btn {{ isAnonymous ? 'anonymous' : 'named' }}"
+          @tap.stop="anonymousChange">
+          <text class="anonymous-text">匿名</text>
+          <text class="named-text">实名</text>
+          <view class="isanonymous-btn-key"></view>
+        </view>
+      </view>
       <input
         class="comment-input"
         type="text"
@@ -117,15 +135,6 @@
         @tap.stop="send"
         src="../assets/svgs/send-fill.svg">
       </image>
-      <view class="isanonymous" wx:if="{{ focusComment || !disable }}">
-        <view
-          class="isanonymous-btn {{ isAnonymous ? 'anonymous' : 'named' }}"
-          @tap.stop="anonymousChange">
-          <text class="anonymous-text">匿名</text>
-          <text class="named-text">实名</text>
-          <view class="isanonymous-btn-key"></view>
-        </view>
-      </view>
     </view>
   </view>
 </template>
@@ -142,6 +151,7 @@ export default class Detail extends wepy.page {
   }
 
   data = {
+    id: '',
     blog: {},
     loading: true,
     placeholder: '写点评论...',
@@ -330,7 +340,7 @@ export default class Detail extends wepy.page {
         } catch (e) {
           wepy.showModal({
             title: '提示',
-            content: '删除评论失败。请重试或截图本提示，联系深大汪峰。' + e.message
+            content: '删除评论失败。请重试或截图本提示，联系海大领沃团队。' + e.message
           })
         }
       }
@@ -437,7 +447,7 @@ export default class Detail extends wepy.page {
         wepy.hideToast()
         wepy.showModal({
           title: '提示',
-          content: '发送评论失败。请重试或截图本提示，联系深大汪峰。' + e.message
+          content: '发送评论失败。请重试或截图本提示，联系海大领沃团队。' + e.message
         })
       }
     }
@@ -449,7 +459,26 @@ export default class Detail extends wepy.page {
 
     await this.fetchDetail(options.id)
     this.focusComment = !!options.focusComment
-    this.isTest = !Boolean(wepy.getStorageSync(`isInTest-${version}`))
+    this.isTest = !wepy.getStorageSync(`isInTest-${version}`)
+    this.$apply()
+  }
+  onShareAppMessage(res) {
+    return {
+      title: `快来嘲讽${this.blog.user.nickname}的树洞`,
+      path: `/pages/detail?id=${this.blog.id}`,
+      success: function(res) {
+        // 转发成功
+      },
+      fail: function(res) {
+        // 转发失败
+      }
+    }
+  }
+  async onUnload() {
+    this.comment = ''
+    this.disable = true
+    this.replyTo = ''
+    this.inputContent = ''
     this.$apply()
   }
 
@@ -492,7 +521,15 @@ export default class Detail extends wepy.page {
 .page {
   width: 100%;
   padding-bottom: 60px;
-
+  .viewbutton {
+    padding: 0;
+    margin: 0;
+    background: #FFF;
+    line-height: 0;
+    &:after {
+      border: 0;
+    }
+  }
   .blog {
     width: 100%;
     padding: 15px;
@@ -753,7 +790,7 @@ export default class Detail extends wepy.page {
 
     .isanonymous {
       background: #FFF;
-      padding: 5px;
+      padding: 10px 0 5px 15px;
       overflow: hidden;
 
       .isanonymous-btn {

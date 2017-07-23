@@ -8,86 +8,88 @@
       class="newBtn">
       <image src="../assets/svgs/write.svg" class="newBtn-icon"></image>
     </navigator>
-    <navigator
-      wx:for="{{ list }}"
+    <block wx:for="{{ list }}"
       wx:for-item="item"
       wx:key="{{ idx }}"
-      wx:for-index="idx"
-      url="/pages/detail?id={{ item.id }}"
-      open-type="navigate"
-      class="list-item">
-      <view class="list-item-fixed" wx:if="{{ item.isFixed }}">置顶</view>
-      <!-- User Info -->
-      <view class="list-user">
-        <view class="list-user-avatar">
-          <image
-            class="avatar"
-            src="{{ item.user.avatar === '../../assert/avatar.png' ? '../assets/svgs/avatar/avatar.svg' : item.user.avatar }}">
-          </image>
-        </view>
-        <view class="list-user-info">
-          <view class="list-user-nickname">
-            <text class="nickname">{{ item.user.nickname }}</text>
+      wx:for-index="idx">
+      <navigator
+        url="/pages/detail?id={{ item.id }}"
+        open-type="navigate"
+        class="list-item">
+        <view class="list-item-fixed" wx:if="{{ item.isFixed }}">置顶</view>
+        <!-- User Info -->
+        <view class="list-user">
+          <view class="list-user-avatar">
             <image
-              wx:if="{{ item.user.isVerified }}"
-              class="verify"
-              src="../assets/svgs/person-v.svg">
+              class="avatar"
+              src="{{ item.user.avatar === '../../assert/avatar.png' ? '../assets/svgs/avatar/avatar.svg' : item.user.avatar }}">
             </image>
           </view>
-          <text class="time-and-from">{{ item.time + ' 来自' + item.device }}</text>
+          <view class="list-user-info">
+            <view class="list-user-nickname">
+              <text class="nickname">{{ item.user.nickname }}</text>
+              <image
+                wx:if="{{ item.user.isVerified }}"
+                class="verify"
+                src="../assets/svgs/person-v.svg">
+              </image>
+            </view>
+            <text class="time-and-from">{{ item.time + ' 来自' + item.device }}</text>
+          </view>
         </view>
-      </view>
-      <!-- Blog Body -->
-      <view class="list-item-body">
-        <text class="list-item-body-content">{{ item.text }}</text>
-        <view class="list-item-body-images" wx:if="{{ item.images.length !== 0 }}">
-          <image
-            wx:for-item="image"
-            wx:for="{{ item.images }}"
-            wx:for-index="i"
-            wx:key="{{ i }}"
-            @tap.stop="viewPic({{ image }}, {{ item.images }})"
-            src="{{ image }}"
-            class="list-item-body-image"
-            mode="aspectFill">
-          </image>
+        <!-- Blog Body -->
+        <view class="list-item-body">
+          <text class="list-item-body-content">{{ item.text }}</text>
+          <view class="list-item-body-images" wx:if="{{ item.images.length !== 0 }}">
+            <image
+              wx:for-item="image"
+              wx:for="{{ item.images }}"
+              wx:for-index="i"
+              wx:key="{{ i }}"
+              @tap.stop="viewPic({{ image }}, {{ item.images }})"
+              src="{{ image }}"
+              class="list-item-body-image"
+              mode="aspectFill">
+            </image>
+          </view>
+          <view
+            class="list-item-location"
+            wx:if="{{ item.location.locationName }}"
+            @tap.stop="showLocation({{ item.location.latitude }}, {{ item.location.longitude }})">
+            <image class="location-icon" src="../assets/svgs/location.svg"></image>
+            <text>{{ item.location.locationName }}</text>
+          </view>
         </view>
-        <view
-          class="list-item-location"
-          wx:if="{{ item.location.locationName }}"
-          @tap.stop="showLocation({{ item.location.latitude }}, {{ item.location.longitude }})">
-          <image class="location-icon" src="../assets/svgs/location.svg"></image>
-          <text>{{ item.location.locationName }}</text>
+      </navigator>
+      
+        <!-- Blog Operations -->
+        <view class="list-item-operations" wx:if="{{ !isTest }}">
+          <view
+            @tap.stop="like({{ idx }}, {{ item.id }})"
+            hover-class="list-item-operation-like-scale"
+            class="list-item-operation-like">
+            <image
+              class="list-item-operation-icon"
+              src="{{ item.like ? '../assets/svgs/like-fill.svg' : '../assets/svgs/like.svg' }}"></image>
+            <text class="number {{ item.like ? 'active' : '' }}" wx:if="{{ item.likeNum !== 0 }}">{{ item.likeNum }}</text>
+          </view>
+          <navigator
+            url="/pages/detail?id={{ item.id }}&focusComment=true"
+            open-type="navigate"
+            class="list-item-operation-comment">
+            <image class="list-item-operation-icon" src="../assets/svgs/comment.svg"></image>
+            <text class="number" wx:if="{{ item.commentNum !== 0 }}">{{ item.commentNum }}</text>
+          </navigator>
+          <view
+            @tap.stop="showMore({{ idx }}, {{ item.id }}, {{ item.user }}, {{ item.isFixed }})"
+            class="list-item-operation-more"
+            wx:if="{{ item.user.isAdmin || item.user.isAuthor }}">
+            <image
+              class="list-item-operation-icon"
+              src="../assets/svgs/more.svg"></image>
+          </view>
         </view>
-      </view>
-      <!-- Blog Operations -->
-      <view class="list-item-operations" wx:if="{{ !isTest }}">
-        <view
-          @tap.stop="like({{ idx }}, {{ item.id }})"
-          hover-class="list-item-operation-like-scale"
-          class="list-item-operation-like">
-          <image
-            class="list-item-operation-icon"
-            src="{{ item.like ? '../assets/svgs/like-fill.svg' : '../assets/svgs/like.svg' }}"></image>
-          <text class="number {{ item.like ? 'active' : '' }}" wx:if="{{ item.likeNum !== 0 }}">{{ item.likeNum }}</text>
-        </view>
-        <navigator
-          url="/pages/detail?id={{ item.id }}&focusComment=true"
-          open-type="navigate"
-          class="list-item-operation-comment">
-          <image class="list-item-operation-icon" src="../assets/svgs/comment.svg"></image>
-          <text class="number" wx:if="{{ item.commentNum !== 0 }}">{{ item.commentNum }}</text>
-        </navigator>
-        <view
-          @tap.stop="showMore({{ idx }}, {{ item.id }})"
-          class="list-item-operation-more"
-          wx:if="{{ item.user.isAdmin || item.user.isAuthor }}">
-          <image
-            class="list-item-operation-icon"
-            src="../assets/svgs/more.svg"></image>
-        </view>
-      </view>
-    </navigator>
+      </block>
   </view>
 </template>
 
@@ -166,13 +168,30 @@ export default class Clist extends wepy.component {
      * 显示更多操作
      * @param {Number} idx 点赞树洞的索引
      * @param {Number} id  点赞树洞的 id
+     * @param {Object} user 用户对象
+     * @param {Boolean} isFixed 是否已经置顶
+     * @param {Boolean} isVerified 是否已经加V
+     * @param {id} openid 用户的openId
     */
-    async showMore (idx, id) {
+    async showMore (idx, id, user, isFixed) {
+      const { isAdmin, isVerified, openid } = user
+      console.log(user)
       try {
+        const itemList = ['删除']
+        if (isAdmin) {
+          if (isFixed) {
+            itemList.push('取消置顶')
+          } else {
+            itemList.push('置顶这条树洞')
+          }
+          if (isVerified) {
+            itemList.push('取消他／她的V')
+          } else {
+            itemList.push('给他／她加V')
+          }
+        }
         const { tapIndex } = await wepy.showActionSheet({
-          itemList: [
-            '删除'
-          ]
+          itemList
         })
 
         if (tapIndex === 0) {
@@ -197,8 +216,31 @@ export default class Clist extends wepy.component {
               }
             })
           }
+        } else if (tapIndex === 1) {
+          await http({
+            url: api.blog.fix.url,
+            method: api.blog.fix.method,
+            data: {
+              bid: id
+            }
+          })
+          wepy.showToast({
+            title: isFixed ? '取消置顶成功' : '置顶成功'
+          })
+        } else if (tapIndex === 2) {
+          await http({
+            url: api.user.verify.url,
+            method: api.user.verify.method,
+            data: {
+              id: openid
+            }
+          })
+          wepy.showToast({
+            title: isVerified ? '取消V成功' : '加V成功'
+          })
         }
       } catch (e) {
+        console.log(e)
         console.log('User cancel')
       }
     },
@@ -218,7 +260,7 @@ export default class Clist extends wepy.component {
   }
 
   onComponentLoad () {
-    this.isTest = !Boolean(wepy.getStorageSync(`isInTest-${version}`))
+    this.isTest = !wepy.getStorageSync(`isInTest-${version}`)
     this.$apply()
   }
 }
@@ -260,7 +302,7 @@ export default class Clist extends wepy.component {
     width: 100%;
     padding: 15px;
     padding-bottom: 12px;
-    margin-bottom: 10px;
+    // margin-bottom: 10px;
     background: #FFF;
     overflow: hidden;
 
@@ -378,51 +420,52 @@ export default class Clist extends wepy.component {
       }
     }
 
-    .list-item-operations {
-      width: 100%;
-      margin-top: 10px;
-      padding-top: 15px;
-      border-top: 1px solid #EEE;
-      overflow: hidden;
+  }
+  .list-item-operations {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 15px 0 10px;
+    border-top: 1px solid #EEE;
+    overflow: hidden;
+    background: #FFF;
 
-      .list-item-operation-like,
-      .list-item-operation-comment,
-      .list-item-operation-more {
-        float: left;
-        width: 70px;
-        position: relative;
-        text-align: center;
+    .list-item-operation-like,
+    .list-item-operation-comment,
+    .list-item-operation-more {
+      float: left;
+      width: 70px;
+      position: relative;
+      text-align: center;
 
-        .list-item-operation-icon {
-          margin-right: 5px;
-          width: 20px;
-          height: 20px;
-        }
-
-        .number {
-          position: absolute;
-          top: 5px;
-          left: 50%;
-          margin-left: 12px;
-          color: #999;
-          font-size: 14px;
-          line-height: 14px;
-          font-weight: bold;
-        }
-
-        .active {
-          color: #FA6570;
-        }
+      .list-item-operation-icon {
+        margin-right: 5px;
+        width: 20px;
+        height: 20px;
       }
 
-      .list-item-operation-like-scale {
-        animation: clickAnimation 300ms ease;
+      .number {
+        position: absolute;
+        top: 5px;
+        left: 50%;
+        margin-left: 12px;
+        color: #999;
+        font-size: 14px;
+        line-height: 14px;
+        font-weight: bold;
       }
 
-      .list-item-operation-more {
-        float: right;
-        text-align: center;
+      .active {
+        color: #FA6570;
       }
+    }
+
+    .list-item-operation-like-scale {
+      animation: clickAnimation 300ms ease;
+    }
+
+    .list-item-operation-more {
+      float: right;
+      text-align: center;
     }
   }
 }

@@ -7,7 +7,7 @@ const version = 2.0
 // development and production host
 const hosts = {
   development: 'http://localhost:3020',
-  production: 'https://sd.iszu.cn'
+  production: 'https://www.work2pix.top'
 }
 
 // apis
@@ -30,6 +30,10 @@ const api = {
       method: 'GET',
       url: '/user/info'
     },
+    verify: {
+      method: 'POST',
+      url: '/user/verify'
+    },
     blog: {
       method: 'GET',
       url: '/v2/user'
@@ -47,6 +51,10 @@ const api = {
     like: {
       method: 'POST',
       url: '/blog/like'
+    },
+    fix: {
+      method: 'POST',
+      url: '/blog/fix'
     },
     delete: {
       method: 'POST',
