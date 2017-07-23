@@ -191,7 +191,7 @@ export default class NewBlog extends wepy.page {
         wepy.hideToast()
         const status = await wepy.showModal({
           title: '温馨提示',
-          content: '需要帮助？深圳 24 小时免费心理咨询热线：0755-28793123',
+          content: '需要帮助？广州24小时免费心理危机咨询热线：020-81899120',
           cancelText: '拨打热线',
           cancelColor: '#3CC51F',
           confirmText: '继续发送',
@@ -200,7 +200,7 @@ export default class NewBlog extends wepy.page {
 
         if (!status.confirm) {
           await wepy.makePhoneCall({
-            phoneNumber: '0755-28793123'
+            phoneNumber: '020-81899120'
           })
           return
         } else {
@@ -263,11 +263,12 @@ export default class NewBlog extends wepy.page {
 
       // upload blog
       try {
-        await http({
+        const msg = await http({
           url: api.blog.new.url,
           method: api.blog.new.method,
           data: pack
         })
+        console.log(msg)
         this.images = []
         this.$apply()
       } catch (e) {
