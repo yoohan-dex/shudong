@@ -170,12 +170,9 @@ export default class Clist extends wepy.component {
      * @param {Number} id  点赞树洞的 id
      * @param {Object} user 用户对象
      * @param {Boolean} isFixed 是否已经置顶
-     * @param {Boolean} isVerified 是否已经加V
-     * @param {id} openid 用户的openId
     */
     async showMore (idx, id, user, isFixed) {
-      const { isAdmin, isVerified, openid } = user
-      console.log(user)
+      const { isAdmin, isVerified, uid } = user
       try {
         const itemList = ['删除']
         if (isAdmin) {
@@ -232,7 +229,7 @@ export default class Clist extends wepy.component {
             url: api.user.verify.url,
             method: api.user.verify.method,
             data: {
-              id: openid
+              id: uid.$oid
             }
           })
           wepy.showToast({

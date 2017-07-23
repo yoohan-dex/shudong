@@ -70,7 +70,7 @@
           </button>
         </view>
         <view
-          @tap.stop="showMore({{ idx }}, {{ blog.id }})"
+          @tap.stop="showMore()"
           class="blog-item-operation-more"
           wx:if="{{ blog.user.isAdmin || blog.user.isAuthor }}">
           <image
@@ -237,29 +237,77 @@ export default class Detail extends wepy.page {
      * @param {Number} id  点赞树洞的 id
     */
     async showMore () {
+      const { isAdmin, isVerified, uid } = this.blog.user
+      const { id, isFixed } = this.blog
       try {
+        const itemList = ['删除']
+        if (isAdmin) {
+          if (isFixed) {
+            itemList.push('取消置顶')
+          } else {
+            itemList.push('置顶这条树洞')
+          }
+          if (isVerified) {
+            itemList.push('取消他／她的V')
+          } else {
+            itemList.push('给他／她加V')
+          }
+        }
         const { tapIndex } = await wepy.showActionSheet({
-          itemList: [
-            '删除'
-          ]
+          itemList
         })
 
         if (tapIndex === 0) {
+          const status = await wepy.showModal({
+            title: '删除',
+            content: '确定要删除这条树洞？',
+            cancelText: '不删了',
+            cancelColor: '#666666',
+            confirmText: '删除吧',
+            confirmColor: '#3CC51F'
+          })
+
+          if (status.confirm) {
+
+            await http({
+              url: api.blog.delete.url,
+              method: api.blog.delete.method,
+              data: {
+                bid: id
+              }
+            })
+            await wepy.navigateBack({
+              delta: 1
+            })
+          }
+        } else if (tapIndex === 1) {
           await http({
-            url: api.blog.delete.url,
-            method: api.blog.delete.method,
+            url: api.blog.fix.url,
+            method: api.blog.fix.method,
             data: {
-              bid: this.blog.id
+              bid: id
             }
           })
-
-          await wepy.navigateBack({
-            delta: 1
+          wepy.showToast({
+            title: isFixed ? '取消置顶成功' : '置顶成功'
+          })
+        } else if (tapIndex === 2) {
+          await http({
+            url: api.user.verify.url,
+            method: api.user.verify.method,
+            data: {
+              id: uid.$oid
+            }
+          })
+          wepy.showToast({
+            title: isVerified ? '取消V成功' : '加V成功'
           })
         }
-      } catch (e) {}
+      } catch (e) {
+        console.log(e)
+        console.log('User cancel')
+      }
     },
-
     /**
      * 显示地图
      * @param {Float} latitude  纬度
